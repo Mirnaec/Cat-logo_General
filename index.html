@@ -28,19 +28,24 @@ main{max-width:1280px;margin:auto;padding:28px 22px 70px}
 
 /* Tarjetas y Fotos encapsuladas */
 .card{background:white;border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;break-inside:avoid;box-shadow:0 5px 20px rgba(43,82,158,.08);height:100%;overflow:hidden;}
-
-/* Aquí está el truco: flex: 0 0 200px obliga a que SIEMPRE mida 200px de alto */
 .photo{flex:0 0 200px; width:100%; background:#fff; display:flex; justify-content:center; align-items:center; position:relative; border-bottom:1px solid var(--line); padding:10px; overflow:hidden;}
 .photo img{max-width:100%; max-height:100%; object-fit:contain;}
 .no-photo{color:#94a3b8;font-size:13px;text-align:center;padding:20px}
 .badge{position:absolute;top:12px;left:12px;background:var(--ink);color:white;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:700;z-index:2}
 
-/* Información del producto (ocupa el resto del espacio) */
+/* Información del producto */
 .info{padding:16px;display:flex;flex-direction:column;flex-grow:1}
 .group{font-size:10px;letter-spacing:.09em;color:var(--accent);font-weight:800;text-transform:uppercase}
 .name{font-size:15px;font-weight:800;line-height:1.4;margin:7px 0 12px;word-break:break-word;flex-grow:1}
-.meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:10px}
-.price{font-size:24px;font-weight:900;color:var(--accent);margin-top:8px}.price small{font-size:11px;color:var(--muted);font-weight:700}
+
+/* NUEVA DIAGRAMACIÓN: Píldoras de Código y Precio */
+.price-section { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+.price-tags { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.tag-pill { background: white; border: 1px solid var(--line); padding: 5px 10px; border-radius: 6px; font-size: 13px; color: var(--muted); box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+.price{font-size:26px;font-weight:900;color:var(--accent); margin:0; display:flex; align-items:baseline; gap:4px; line-height:1;}
+.price small{font-size:13px;color:var(--muted);font-weight:700}
+
+/* Extras dinámicos */
 .extras-container{margin-top:12px;display:flex;flex-direction:column;gap:4px}
 .extra-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:4px}
 .extra-row b{color:var(--ink)}
@@ -51,6 +56,7 @@ main{max-width:1280px;margin:auto;padding:28px 22px 70px}
   header{position:static}.no-print{display:none!important}body{background:white}main{max-width:none;padding:0}
   .hero{border-radius:0;margin:0 0 12px;padding:22px;background:var(--ink);color:white;}.grid{grid-template-columns:repeat(3,1fr);gap:8px}
   .card{border-radius:8px;box-shadow:none;border-color:#ccc}.photo{flex:0 0 160px; padding:5px}.info{padding:10px}.name{font-size:13px;margin-bottom:8px}.price{font-size:18px}
+  .tag-pill { box-shadow: none; border-color: #ddd; padding: 3px 6px; font-size: 11px; }
   @page{size:A4 landscape;margin:8mm}
 }
 </style>
@@ -149,6 +155,8 @@ function render(){
     }
 
     const card=document.createElement("article");card.className="card";
+    
+    // Aquí implementamos el diseño exacto que pediste
     card.innerHTML=`
       <div class="photo">
         <span class="badge">${esc(p.code)}</span>
@@ -157,8 +165,15 @@ function render(){
       <div class="info">
         <div class="group">${esc(p.group)}</div>
         <div class="name">${esc(p.name)}</div>
-        <div class="meta"><span>Código: ${esc(p.code)}</span><span>Precio bulto</span></div>
-        <div class="price">${money(p.price)} <small>USD</small></div>
+        
+        <div class="price-section">
+          <div class="price-tags">
+            <span class="tag-pill">Precio bulto</span>
+            <span class="tag-pill">Cod: ${esc(p.code)}</span>
+          </div>
+          <div class="price">${money(p.price)} <small>USD</small></div>
+        </div>
+
         ${extrasHTML}
       </div>`;
     grid.appendChild(card);
