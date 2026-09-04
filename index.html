@@ -21,9 +21,13 @@ header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);backdro
 input,select,button{border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:white;font:inherit}
 input{min-width:230px}button{cursor:pointer;font-weight:700;background:var(--accent);color:white;border-color:var(--accent)}
 main{max-width:1280px;margin:auto;padding:28px 22px 70px}
+
+/* Banner Principal */
 .hero{background:linear-gradient(135deg,#2b529e,#1c366e);color:white;border-radius:24px;padding:34px;margin-bottom:24px}
-.hero h2{font-size:38px;margin:0 0 8px}.hero p{margin:0;opacity:.9}
+.hero h2{font-size:46px;font-weight:900;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px}
+.hero p{font-size:22px;font-weight:500;margin:0;opacity:.9}
 .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.pill{padding:8px 12px;background:rgba(255,255,255,.15);border-radius:999px;font-size:13px}
+
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 
 /* Tarjetas y Fotos encapsuladas */
@@ -38,7 +42,7 @@ main{max-width:1280px;margin:auto;padding:28px 22px 70px}
 .group{font-size:10px;letter-spacing:.09em;color:var(--accent);font-weight:800;text-transform:uppercase}
 .name{font-size:15px;font-weight:800;line-height:1.4;margin:7px 0 12px;word-break:break-word;flex-grow:1}
 
-/* NUEVA DIAGRAMACIÓN: Píldoras de Código y Precio */
+/* Píldoras de Código y Precio */
 .price-section { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
 .price-tags { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .tag-pill { background: white; border: 1px solid var(--line); padding: 5px 10px; border-radius: 6px; font-size: 13px; color: var(--muted); box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
@@ -51,13 +55,33 @@ main{max-width:1280px;margin:auto;padding:28px 22px 70px}
 .extra-row b{color:var(--ink)}
 .empty{padding:60px;text-align:center;color:var(--muted);grid-column:1/-1}
 
-@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.hero h2{font-size:28px}.top{padding:12px}.photo{flex:0 0 170px}}@media(max-width:430px){.grid{grid-template-columns:1fr}input{min-width:100%}}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.hero h2{font-size:32px}.hero p{font-size:18px}.top{padding:12px}.photo{flex:0 0 170px}}@media(max-width:430px){.grid{grid-template-columns:1fr}input{min-width:100%}}
+
+/* REGLAS ESTRICTAS PARA EL PDF (IMPRESIÓN) */
 @media print{
-  header{position:static}.no-print{display:none!important}body{background:white}main{max-width:none;padding:0}
-  .hero{border-radius:0;margin:0 0 12px;padding:22px;background:var(--ink);color:white;}.grid{grid-template-columns:repeat(3,1fr);gap:8px}
-  .card{border-radius:8px;box-shadow:none;border-color:#ccc}.photo{flex:0 0 160px; padding:5px}.info{padding:10px}.name{font-size:13px;margin-bottom:8px}.price{font-size:18px}
-  .tag-pill { box-shadow: none; border-color: #ddd; padding: 3px 6px; font-size: 11px; }
-  @page{size:A4 landscape;margin:8mm}
+  /* Forzar al navegador a pintar los fondos (el azul del banner) */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  
+  /* Formato vertical (portrait) */
+  @page{size:A4 portrait; margin:10mm}
+  
+  header{position:static}.no-print{display:none!important}
+  body{background:white}
+  main{max-width:none;padding:0}
+  
+  .hero{border-radius:8px;margin:0 0 16px;padding:22px;background:var(--ink) !important;color:white !important;}
+  
+  /* Grid de 3 columnas ajustado al inicio para evitar huecos */
+  .grid{grid-template-columns:repeat(3,1fr);gap:12px; align-items:start;}
+  
+  /* Evitar que las tarjetas se partan a la mitad o generen huecos gigantes */
+  .card{border-radius:8px;box-shadow:none;border-color:#ddd; height:auto; page-break-inside:avoid; break-inside:avoid;}
+  
+  .photo{flex:0 0 150px; padding:5px; border-bottom:1px solid #ddd;}
+  .info{padding:10px}
+  .name{font-size:12px;margin-bottom:8px}
+  .price{font-size:18px}
+  .tag-pill { box-shadow: none; border-color: #eee; padding: 3px 6px; font-size: 10px; }
 }
 </style>
 </head>
@@ -73,8 +97,8 @@ main{max-width:1280px;margin:auto;padding:28px 22px 70px}
 </header>
 <main id="catalog">
   <section class="hero">
-    <h2>CATÁLOGO MAYORISTA</h2>
-    <p>Selecciona los productos y genera tu PDF personalizado.</p>
+    <h2>CATÁLOGO</h2>
+    <p>Gran liquidación</p>
     <div class="stats"><span class="pill" id="count">0 productos</span></div>
   </section>
   <div id="grid" class="grid"></div>
@@ -156,7 +180,6 @@ function render(){
 
     const card=document.createElement("article");card.className="card";
     
-    // Aquí implementamos el diseño exacto que pediste
     card.innerHTML=`
       <div class="photo">
         <span class="badge">${esc(p.code)}</span>
