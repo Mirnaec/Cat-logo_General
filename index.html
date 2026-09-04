@@ -1,215 +1,332 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Catálogo Mirna B2B</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<style>
-:root{
-  /* Colores Almacenes Mirna */
-  --ink:#2b529e;      /* Azul Mirna */
-  --accent:#e31a61;   /* Fucsia Mirna */
-  --muted:#64748b; 
-  --paper:#f6f7fb;
-  --line:#e7eaf0;
-}
-*{box-sizing:border-box} body{margin:0;background:var(--paper);font-family:Inter,Arial,sans-serif;color:#172033}
-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.top{max-width:1280px;margin:auto;padding:16px 22px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.brand{margin-right:auto}.brand h1{margin:0;font-size:22px;color:var(--ink)}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
-input,select,button{border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:white;font:inherit}
-input{min-width:230px}button{cursor:pointer;font-weight:700;background:var(--accent);color:white;border-color:var(--accent)}
-main{max-width:1280px;margin:auto;padding:28px 22px 70px}
-
-/* Banner Principal */
-.hero{background:linear-gradient(135deg,#2b529e,#1c366e);color:white;border-radius:24px;padding:34px;margin-bottom:24px}
-.hero h2{font-size:46px;font-weight:900;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px}
-.hero p{font-size:22px;font-weight:500;margin:0;opacity:.9}
-.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.pill{padding:8px 12px;background:rgba(255,255,255,.15);border-radius:999px;font-size:13px}
-
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
-
-/* Tarjetas y Fotos encapsuladas */
-.card{background:white;border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;break-inside:avoid;box-shadow:0 5px 20px rgba(43,82,158,.08);height:100%;overflow:hidden;}
-.photo{flex:0 0 200px; width:100%; background:#fff; display:flex; justify-content:center; align-items:center; position:relative; border-bottom:1px solid var(--line); padding:10px; overflow:hidden;}
-.photo img{max-width:100%; max-height:100%; object-fit:contain;}
-.no-photo{color:#94a3b8;font-size:13px;text-align:center;padding:20px}
-.badge{position:absolute;top:12px;left:12px;background:var(--ink);color:white;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:700;z-index:2}
-
-/* Información del producto */
-.info{padding:16px;display:flex;flex-direction:column;flex-grow:1}
-.group{font-size:10px;letter-spacing:.09em;color:var(--accent);font-weight:800;text-transform:uppercase}
-.name{font-size:15px;font-weight:800;line-height:1.4;margin:7px 0 12px;word-break:break-word;flex-grow:1}
-
-/* Píldoras de Código y Precio */
-.price-section { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
-.price-tags { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.tag-pill { background: white; border: 1px solid var(--line); padding: 5px 10px; border-radius: 6px; font-size: 13px; color: var(--muted); box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
-.price{font-size:26px;font-weight:900;color:var(--accent); margin:0; display:flex; align-items:baseline; gap:4px; line-height:1;}
-.price small{font-size:13px;color:var(--muted);font-weight:700}
-
-/* Extras dinámicos */
-.extras-container{margin-top:12px;display:flex;flex-direction:column;gap:4px}
-.extra-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:4px}
-.extra-row b{color:var(--ink)}
-.empty{padding:60px;text-align:center;color:var(--muted);grid-column:1/-1}
-
-@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.hero h2{font-size:32px}.hero p{font-size:18px}.top{padding:12px}.photo{flex:0 0 170px}}@media(max-width:430px){.grid{grid-template-columns:1fr}input{min-width:100%}}
-
-/* REGLAS ESTRICTAS PARA EL PDF (IMPRESIÓN) */
-@media print{
-  /* Forzar al navegador a pintar los fondos (el azul del banner) */
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  
-  /* Formato vertical (portrait) */
-  @page{size:A4 portrait; margin:10mm}
-  
-  header{position:static}.no-print{display:none!important}
-  body{background:white}
-  main{max-width:none;padding:0}
-  
-  .hero{border-radius:8px;margin:0 0 16px;padding:22px;background:var(--ink) !important;color:white !important;}
-  
-  /* Grid de 3 columnas ajustado al inicio para evitar huecos */
-  .grid{grid-template-columns:repeat(3,1fr);gap:12px; align-items:start;}
-  
-  /* Evitar que las tarjetas se partan a la mitad o generen huecos gigantes */
-  .card{border-radius:8px;box-shadow:none;border-color:#ddd; height:auto; page-break-inside:avoid; break-inside:avoid;}
-  
-  .photo{flex:0 0 150px; padding:5px; border-bottom:1px solid #ddd;}
-  .info{padding:10px}
-  .name{font-size:12px;margin-bottom:8px}
-  .price{font-size:18px}
-  .tag-pill { box-shadow: none; border-color: #eee; padding: 3px 6px; font-size: 10px; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo B2B - Almacenes Mirna</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Html2Pdf para descargar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        mirna: {
+                            blue: '#2b477a',
+                            red: '#e11d48', // Color rojizo/rosado de los precios
+                            bg: '#f4f6f9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f6f9; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body>
-<header class="no-print">
-  <div class="top">
-    <div class="brand"><h1>Catálogo Almacenes Mirna</h1><p>Ventas B2B · Precios al por mayor</p></div>
-    <input id="search" placeholder="Buscar producto o código..." />
-    <select id="category"><option value="">Todas las categorías</option></select>
-    <select id="marcacion" style="display:none;"><option value="">Todas las marcaciones</option></select>
-    <button id="pdf">⬇ Descargar PDF</button>
-  </div>
-</header>
-<main id="catalog">
-  <section class="hero">
-    <h2>CATÁLOGO</h2>
-    <p>Gran liquidación</p>
-    <div class="stats"><span class="pill" id="count">0 productos</span></div>
-  </section>
-  <div id="grid" class="grid"></div>
-</main>
-<script>
-// TU URL DEL APPS SCRIPT
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmPvRCxsv-F6nn_gXJm9ZM8b5-XChmShSR02VJkwKGKkcqHSCw1KB5AMG4bQaxeUTjYQ/exec"; 
+<body class="text-gray-800">
 
-let products = [], images = {}, filtered = [];
-
-const $ = s => document.querySelector(s);
-const money = n => n == null ? "Consultar" : new Intl.NumberFormat("es-EC",{style:"currency",currency:"USD"}).format(n);
-
-async function loadData(){
-  if(APPS_SCRIPT_URL){
-    try{
-      const remote = await fetch(APPS_SCRIPT_URL).then(r=>r.json());
-      if(remote.products?.length) products = remote.products.map(normalize);
-      images = remote.images || {};
-    }catch(e){ console.error("Error cargando datos", e); }
-  }
-  fillDropdowns(); applyFilters();
-}
-
-function normalize(x){
-  return {
-    code: String(x.code||"").trim(),
-    name: String(x.name||"").trim(),
-    price: Number(x.price || 0),
-    group: String(x.group||"Sin categoría").trim(),
-    marcacion: String(x.marcacion||"").trim(),
-    extras: x.extras || {}
-  };
-}
-
-function fillDropdowns(){
-  [...new Set(products.map(p=>p.group).filter(Boolean))].sort().forEach(g=>{
-    const o=document.createElement("option");o.value=g;o.textContent=g;$("#category").append(o);
-  });
-  
-  const marcaciones = [...new Set(products.map(p=>p.marcacion).filter(Boolean))].sort();
-  if(marcaciones.length > 0){
-    $("#marcacion").style.display = 'inline-block';
-    marcaciones.forEach(m=>{
-      const o=document.createElement("option");o.value=m;o.textContent=m;$("#marcacion").append(o);
-    });
-  }
-}
-
-function applyFilters(){
-  const q=$("#search").value.toLowerCase().trim();
-  const cat=$("#category").value;
-  const marc=$("#marcacion").value;
-  
-  filtered=products.filter(p=>
-    (!cat || p.group === cat) &&
-    (!marc || p.marcacion === marc) &&
-    (!q || `${p.code} ${p.name} ${p.group} ${p.marcacion}`.toLowerCase().includes(q))
-  );
-  
-  $("#count").textContent=`${filtered.length} productos`;
-  render();
-}
-
-function render(){
-  const grid=$("#grid"); grid.innerHTML="";
-  if(!filtered.length){grid.innerHTML='<div class="empty">No encontramos productos con esos filtros.</div>';return}
-  
-  filtered.forEach(p=>{
-    const image=images[p.code];
-    
-    let extrasHTML = '';
-    const extraKeys = Object.keys(p.extras);
-    if(extraKeys.length > 0){
-      extrasHTML = `<div class="extras-container">
-        ${extraKeys.map(k => p.extras[k] ? `<div class="extra-row"><span>${esc(k)}:</span> <b>${esc(p.extras[k])}</b></div>` : '').join('')}
-      </div>`;
-    }
-
-    const card=document.createElement("article");card.className="card";
-    
-    card.innerHTML=`
-      <div class="photo">
-        <span class="badge">${esc(p.code)}</span>
-        ${image?`<img loading="lazy" src="${image}" alt="${esc(p.name)}">`:`<div class="no-photo">Foto pendiente<br><b>${esc(p.code)}</b></div>`}
-      </div>
-      <div class="info">
-        <div class="group">${esc(p.group)}</div>
-        <div class="name">${esc(p.name)}</div>
-        
-        <div class="price-section">
-          <div class="price-tags">
-            <span class="tag-pill">Precio bulto</span>
-            <span class="tag-pill">Cod: ${esc(p.code)}</span>
-          </div>
-          <div class="price">${money(p.price)} <small>USD</small></div>
+    <!-- Top Navbar -->
+    <nav class="bg-white px-6 py-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 sticky top-0 z-50">
+        <div class="flex flex-col text-center md:text-left">
+            <h1 class="text-mirna-blue font-bold text-xl leading-tight">Catálogo Almacenes Mirna</h1>
+            <p class="text-gray-500 text-sm">Ventas B2B <span class="mx-1">|</span> Precios al por mayor</p>
         </div>
+        
+        <div class="flex flex-col md:flex-row w-full md:w-auto gap-3">
+            <!-- Buscador -->
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Buscar producto o código..." 
+                class="border border-gray-300 rounded-md px-4 py-2 w-full md:w-64 text-sm focus:outline-none focus:border-mirna-blue"
+                onkeyup="handleSearch()"
+            >
+            <!-- Select Categorías -->
+            <select id="category-select" class="border border-gray-300 rounded-md px-4 py-2 w-full md:w-56 text-sm focus:outline-none focus:border-mirna-blue" onchange="handleFilter()">
+                <!-- Opciones inyectadas por JS -->
+            </select>
+            <!-- Botón PDF -->
+            <button onclick="downloadPDF()" class="bg-mirna-red hover:bg-rose-700 text-white px-5 py-2 rounded-md font-semibold text-sm flex items-center justify-center gap-2 transition-colors whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+                Descargar PDF
+            </button>
+        </div>
+    </nav>
 
-        ${extrasHTML}
-      </div>`;
-    grid.appendChild(card);
-  });
-}
+    <!-- Área Principal para imprimir en PDF -->
+    <div id="catalog-content">
+        
+        <!-- Header Banner Azul -->
+        <header class="bg-mirna-blue rounded-xl mx-4 md:mx-8 mt-6 p-8 md:p-10 text-white shadow-md relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-4xl md:text-5xl font-extrabold uppercase tracking-wide mb-1">CATÁLOGO</h2>
+                <p class="text-lg md:text-xl font-light text-blue-100">Precios Especiales</p>
+                <div class="mt-4 bg-white/20 border border-white/30 backdrop-blur-sm inline-block px-4 py-1.5 rounded-full text-sm font-semibold">
+                    <span id="product-count">107</span> productos
+                </div>
+            </div>
+            <!-- Decoración de fondo -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-2xl"></div>
+        </header>
 
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-$("#search").addEventListener("input",applyFilters); 
-$("#category").addEventListener("change",applyFilters);
-$("#marcacion").addEventListener("change",applyFilters);
-$("#pdf").addEventListener("click",()=>window.print());
+        <!-- Grilla de Productos -->
+        <main class="p-4 md:p-8">
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <!-- JS inyecta los productos aquí -->
+            </div>
+        </main>
+        
+    </div>
 
-loadData();
-</script>
+    <script>
+        // Data de los productos de tu ERP / Liquidación
+        const productsData = [
+            {"codigo": "2100733", "nombre": "Cepillo Smart Oral Hc803 /408032", "precio": 0.12, "categoria": "Cepillos de Dientes"},
+            {"codigo": "7100189", "nombre": "Batidora de Pedestal 7 Velocidades Smart Home PN-208WB", "precio": 12.50, "categoria": "Batidoras"},
+            {"codigo": "2100732", "nombre": "Cepillo Smart Oral C/Hilo Hc511 /Yb02", "precio": 0.19, "categoria": "Cepillos de Dientes"},
+            {"codigo": "1103157", "nombre": "Papel Aluminio Big Home 5M Big1040", "precio": 0.50, "categoria": "Papel Aluminio y Plástico para Alimentos"},
+            {"codigo": "1107045", "nombre": "Cuchara Arroz Super Corona Kt-110", "precio": 0.65, "categoria": "Cucharas de Cocina"},
+            {"codigo": "1200423", "nombre": "Mantel 140X220Cm Surtido Big 7013", "precio": 3.50, "categoria": "Manteles"},
+            {"codigo": "1204812", "nombre": "Plato Cuenco 5 Pulgadas Ga2005/Flr Big Home", "precio": 0.40, "categoria": "Vajillas en Piezas Sueltas"},
+            {"codigo": "1400670", "nombre": "Porta Zapato Acero 3Nv Ae-3418A3", "precio": 17.50, "categoria": "Zapateras"},
+            {"codigo": "2100736", "nombre": "Cepillo Smart Oral C/Hilo Dental Y777", "precio": 0.18, "categoria": "Cepillos de Dientes"},
+            {"codigo": "1200444", "nombre": "Mantel 150X220 Cm Flores Surtido Big-7014", "precio": 3.25, "categoria": "Manteles"},
+            {"codigo": "1500149", "nombre": "Cortina Para Baño Pvc 180X170 Big Home 16891-3", "precio": 3.25, "categoria": "Cortinas para Ducha"},
+            {"codigo": "4200076", "nombre": "Silicon Liq Smart 60Ml Sma-60 /981359", "precio": 0.42, "categoria": "Pegamentos"},
+            {"codigo": "6300505", "nombre": "Parasol de Playa 160cm Estampado Big-Home BH-85-RB", "precio": 6.50, "categoria": "Parasoles"},
+            {"codigo": "1100542", "nombre": "Purificador de Agua 14L Big Home con Filtro AH-203", "precio": 15.00, "categoria": "Dispensadores para Bebidas, Filtros y Purificadores"},
+            {"codigo": "2200379", "nombre": "Rodillera 2 Piezas Julong Ref 828/993167/Mia-270", "precio": 1.25, "categoria": "Rodilleras y Tobilleras"},
+            {"codigo": "1800113", "nombre": "Pelota Football Spin Pro Superball Smpu4068- A/B/C", "precio": 6.50, "categoria": "Fútbol"},
+            {"codigo": "4100221", "nombre": "Pistola de Silicona Smart (15W) LC-101T", "precio": 3.25, "categoria": "Pistolas de Silicon"},
+            {"codigo": "2100734", "nombre": "Cepillo Smart Oral Kids C/Hilo 313 /Hc313", "precio": 0.16, "categoria": "Cepillos de Dientes"},
+            {"codigo": "7100079", "nombre": "Regulador Smart-Home S900M", "precio": 4.25, "categoria": "Reguladores, Cilindros de Gas y Quemadores para Cocina"},
+            {"codigo": "1105574", "nombre": "Cantina de Hierro Enlozado 3L Big Home WT-A27-3.0L", "precio": 11.50, "categoria": "Teteras y Cantinas"},
+            {"codigo": "1103156", "nombre": "Papel Aluminio 10M Big Home Big1041", "precio": 0.80, "categoria": "Papel Aluminio y Plástico para Alimentos"},
+            {"codigo": "6300510", "nombre": "Parasol de Playa 160cm Estampado Big-Home BH-85-P", "precio": 6.00, "categoria": "Parasoles"},
+            {"codigo": "1701632", "nombre": "Tabla De Planchar Basic Big Home 34X97Cm Ib001", "precio": 16.50, "categoria": "Tablas y Muebles para Planchar"},
+            {"codigo": "7100683", "nombre": "Licuadora Rever 18 Litros Smarthome Pn912", "precio": 42.00, "categoria": "Licuadoras"},
+            {"codigo": "7100269", "nombre": "Cafetera Electrica 8tzs 650w Smart Home Negra SH-01B", "precio": 9.50, "categoria": "Cafeteras y Dispensadores de Café"},
+            {"codigo": "7100452", "nombre": "Exprimidor de Citricos Smart Home JC-26", "precio": 26.00, "categoria": "Exprimidores de Cítricos y Extractores de Jugos"},
+            {"codigo": "7100214", "nombre": "Batidora de Mano 7 Velocidades Smart Home PN-208", "precio": 9.75, "categoria": "Batidoras"},
+            {"codigo": "6201996", "nombre": "Vajilla Navidad Dolom D20-F04", "precio": 20.00, "categoria": "Juegos de Vajillas Navideñas"},
+            {"codigo": "1701152", "nombre": "Estropajo Big-Home Malla X6Und 120G Bh005", "precio": 0.60, "categoria": "Esponjas y Estropajos"},
+            {"codigo": "1701633", "nombre": "Tabla De Planchar Classic Big Home 38X120Cm Ib005", "precio": 25.00, "categoria": "Tablas y Muebles para Planchar"},
+            {"codigo": "4100318", "nombre": "Tijera Smart 7 Pulgadas /051609 Mia-3108", "precio": 0.28, "categoria": "Profesionales"},
+            {"codigo": "4200142", "nombre": "Fosforera Soplete Lintern Big-Home Gas Hc-829B", "precio": 0.21, "categoria": "Fosforeras"},
+            {"codigo": "7100271", "nombre": "Cafetera Electrica 8tzs 650w Smart Home Negra SH-02B", "precio": 9.99, "categoria": "Cafeteras y Dispensadores de Café"},
+            {"codigo": "4300846", "nombre": "Lupa Mia-4988", "precio": 0.31, "categoria": "Lupas"},
+            {"codigo": "1200425", "nombre": "Mantel 140X250Cm Flores Surtido Big-7014-1", "precio": 4.00, "categoria": "Manteles"},
+            {"codigo": "1800068", "nombre": "Bolsa de Dormir Para Camping 75x215cm MIA-8704", "precio": 9.75, "categoria": "Camping"},
+            {"codigo": "2200372", "nombre": "Muslera Poliester 823 Azul Caja Julong | Mia-1325", "precio": 1.15, "categoria": "Musleras y Pantorrilleras"},
+            {"codigo": "2200358", "nombre": "Faja Poliester Julong Azul 729", "precio": 2.20, "categoria": "Correctores y Fajas"},
+            {"codigo": "1200819", "nombre": "Copa De Acero Inoxidable Mia-9181 / Bbdkhjb-450", "precio": 9.00, "categoria": "Copas"},
+            {"codigo": "4200072", "nombre": "Silicon Liq Smart 100Ml Sma-100 /981366", "precio": 0.65, "categoria": "Pegamentos"},
+            {"codigo": "1200817", "nombre": "Copa De Acero Inoxidable Mia-9179 / Bbhjb-520", "precio": 9.00, "categoria": "Copas"},
+            {"codigo": "4200075", "nombre": "Silicon Liq Smart 500Ml Sma-500", "precio": 2.64, "categoria": "Pegamentos"},
+            {"codigo": "2200357", "nombre": "Faja Poliester 719 Julong Mia266", "precio": 3.25, "categoria": "Correctores y Fajas"},
+            {"codigo": "2200384", "nombre": "Tobilleras Poliester Azul Julong 544", "precio": 0.75, "categoria": "Rodilleras y Tobilleras"},
+            {"codigo": "1103281", "nombre": "Cuchillo Super Corona M/Ac 12 Pulgadas Kf-H12", "precio": 1.75, "categoria": "Cuchillos"},
+            {"codigo": "3100134", "nombre": "Candado Porte Bl 25-30-40Mm Mia-690", "precio": 7.00, "categoria": "Candados"},
+            {"codigo": "2101151", "nombre": "Peine Para Piojo Acero Redondo Mia-6723", "precio": 0.30, "categoria": "Peines y Peinillas"},
+            {"codigo": "1103280", "nombre": "Cuchillo Super Corona M/Ac 10 Pulgadas Kf-H10", "precio": 1.55, "categoria": "Cuchillos"},
+            {"codigo": "1201880", "nombre": "Jarro Sublimation 12 Onzas V Shape", "precio": 0.90, "categoria": "Jarros"},
+            {"codigo": "7100270", "nombre": "Cafetera Electrica 8tzs 650w Smart Home Blanca SH-01W", "precio": 9.50, "categoria": "Cafeteras y Dispensadores de Café"},
+            {"codigo": "1200818", "nombre": "Copa De Acero Inoxidable Mia-9180 / Bbjwj-150", "precio": 9.00, "categoria": "Copas"},
+            {"codigo": "1101555", "nombre": "Repostero Plástico Rectangular 3 Piezas Big Home Flsb259", "precio": 6.00, "categoria": "Reposteros"},
+            {"codigo": "4200064", "nombre": "Barras de Silicona Gruesa 1Kg 11.2mmx30cm Smart 1091-B", "precio": 8.00, "categoria": "Pegamentos"},
+            {"codigo": "1400769", "nombre": "Colchón Inflable Intex Con Bomba 64111Cl", "precio": 27.00, "categoria": "Colchones Inflables"},
+            {"codigo": "5500162", "nombre": "Peluche Sensorial Monito Para Bebé 2608R23", "precio": 4.75, "categoria": "Sonajeros"},
+            {"codigo": "2100735", "nombre": "Cepillo Smart Oral Y777 /Hc360", "precio": 0.16, "categoria": "Cepillos de Dientes"},
+            {"codigo": "1101289", "nombre": "Porta Vajilla De Aluminio 2 Niveles Big Home Cromado Ta6312A2", "precio": 31.00, "categoria": "Porta Vajillas y Escurridores de Platos"},
+            {"codigo": "1103282", "nombre": "Cuchillo Super Corona M/Ac 7 Pulgadas Kf-H7", "precio": 1.35, "categoria": "Cuchillos"},
+            {"codigo": "2101142", "nombre": "Peinilla Mia-6722", "precio": 0.31, "categoria": "Peines y Peinillas"},
+            {"codigo": "1800069", "nombre": "Bolsa de Domir para Camping 68x200cm MIA8705", "precio": 6.50, "categoria": "Camping"},
+            {"codigo": "1701151", "nombre": "Estropajo Big-Home Malla X4Und 80G Bh004", "precio": 0.40, "categoria": "Esponjas y Estropajos"},
+            {"codigo": "4200073", "nombre": "Silicon Liq Smart 250Ml Sma-250 /981373", "precio": 1.35, "categoria": "Pegamentos"},
+            {"codigo": "1201418", "nombre": "Set Jarra C/Vasos Pavonado Big Home 10Onz 137Fs-7Th", "precio": 6.50, "categoria": "Jarras"},
+            {"codigo": "6300623", "nombre": "Piscina Easy Set Redonda con Filtro 76x305cm 1018Gal Intex 28121EH", "precio": 99.00, "categoria": "Piscinas Inflables"},
+            {"codigo": "1108703", "nombre": "Cantina 2.2L Big Home WT-B05-2.2L", "precio": 8.50, "categoria": "Teteras y Cantinas"},
+            {"codigo": "1200424", "nombre": "Mantel 140X250Cm Flores Surtido Big-7013-1", "precio": 4.50, "categoria": "Manteles"},
+            {"codigo": "2200346", "nombre": "Codera Elastica 825 Julong Mia1327", "precio": 1.00, "categoria": "Coderas"},
+            {"codigo": "4200138", "nombre": "Fosforera Soplete C/Linterna Big-Home Hc-818", "precio": 0.25, "categoria": "Fosforeras"},
+            {"codigo": "6400085", "nombre": "Paragua Bastón Infantil MIA-8686", "precio": 1.05, "categoria": "Paraguas"},
+            {"codigo": "1103267", "nombre": "Cuchillo Mundial M/Color 8 Mia-5502", "precio": 0.90, "categoria": "Cuchillos"},
+            {"codigo": "6300506", "nombre": "Parasol 85cm Multicolor Big-Home BH-85-M", "precio": 6.00, "categoria": "Parasoles"},
+            {"codigo": "1701638", "nombre": "Tabla De Planchar Patrick Refor Tub25 Big Home 34X110Cm Ib003", "precio": 19.99, "categoria": "Tablas y Muebles para Planchar"},
+            {"codigo": "4300557", "nombre": "Lapiz Smart Hb Nro. 2 Mia-5283", "precio": 0.03, "categoria": "Lápices de Grafito"},
+            {"codigo": "6102036", "nombre": "Set Jardineria Mini Planting 21pzs 623-3003", "precio": 9.00, "categoria": "Sets de Limpieza y Jardinería"},
+            {"codigo": "1101553", "nombre": "Repostero Plástico Cuadrado 3 Piezas Big Home Flq234", "precio": 6.00, "categoria": "Reposteros"},
+            {"codigo": "1103265", "nombre": "Cuchillo Mundial M/Color 6 Mia-5500", "precio": 0.85, "categoria": "Cuchillos"},
+            {"codigo": "1100138", "nombre": "Balde Rectangular 22 Litros Transparente Tapa Color Plt93", "precio": 7.00, "categoria": "Baldes Jugueros"},
+            {"codigo": "1107107", "nombre": "Cuchareta Arroz Mia-3512", "precio": 0.65, "categoria": "Cucharones y Cucharetas"},
+            {"codigo": "3100135", "nombre": "Candado Porte Bl 30-40-50Mm Mia-689", "precio": 9.99, "categoria": "Candados"},
+            {"codigo": "1105917", "nombre": "Set Manga Pastelera/Boquilla Mia-20199", "precio": 2.75, "categoria": "Decoradores"},
+            {"codigo": "1103268", "nombre": "Cuchillo Mundial M/Color 9 Mia-5503", "precio": 0.95, "categoria": "Cuchillos"},
+            {"codigo": "4200141", "nombre": "Fosforera Soplete Lintern Big-Home Gas Hc-829A", "precio": 0.21, "categoria": "Fosforeras"},
+            {"codigo": "1103266", "nombre": "Cuchillo Mundial M/Color 7 Mia-5501", "precio": 0.90, "categoria": "Cuchillos"},
+            {"codigo": "1200188", "nombre": "Cuchillo D/Mesa Labra-Dora X6Und Funda Mia-6630-1", "precio": 3.25, "categoria": "Cubiertos en Piezas Sueltas"},
+            {"codigo": "1800897", "nombre": "Pelota Vinil Surtido Superball W4681Pb-9", "precio": 0.89, "categoria": "Pelotas Plásticas y de Caucho"},
+            {"codigo": "1105573", "nombre": "Cantina de Hierro Enlozado 2.2L Big Home WT-A05-2.2L", "precio": 10.25, "categoria": "Teteras y Cantinas"},
+            {"codigo": "1200816", "nombre": "Copa De Acero Inoxidable Mia-9178 / Bblghjb-520", "precio": 9.00, "categoria": "Copas"},
+            {"codigo": "1200336", "nombre": "Juego Cubierto Big-Home 24 Piezas F19", "precio": 4.50, "categoria": "Juegos de Cubiertos"},
+            {"codigo": "6100466", "nombre": "Kit Bolas De Billar 16 Piezas Mia258", "precio": 12.00, "categoria": "Billar"},
+            {"codigo": "1101554", "nombre": "Repostero Plástico Cuadrado 3 Piezas Big Home Lila Flsb148", "precio": 5.50, "categoria": "Reposteros"},
+            {"codigo": "1203122", "nombre": "Bandeja Acero Inoxidable Rectangular Mia-8900", "precio": 1.20, "categoria": "Bandejas y Charoles"},
+            {"codigo": "1108712", "nombre": "Set Condimenteros y Aceiteras Vidrio 6pzs Big Home 50821/57821", "precio": 5.50, "categoria": "Condimenteros y Aceiteros"},
+            {"codigo": "2100166", "nombre": "Llavero B/Billar Caja X16 Mia-694", "precio": 5.50, "categoria": "Llaveros"},
+            {"codigo": "3100347", "nombre": "Linterna Pila Pequeño C/Zoom Mia-2042", "precio": 0.50, "categoria": "Linternas"},
+            {"codigo": "1101558", "nombre": "Repostero Big-Home Plástico Red X3 Piezas Tapa Color Fl-R234", "precio": 5.00, "categoria": "Reposteros"},
+            {"codigo": "3100225", "nombre": "Flexometro Digital Laser Mia-6715", "precio": 30.00, "categoria": "Flexómetros"},
+            {"codigo": "1103175", "nombre": "Chaira Afilador De Cuchillo Mia-4190", "precio": 0.75, "categoria": "Afiladores"},
+            {"codigo": "2100746", "nombre": "Cepillo Smart Oral Phsw02", "precio": 0.22, "categoria": "Cepillos de Dientes"},
+            {"codigo": "3100297", "nombre": "Linterna D/Mano Mia-8994", "precio": 0.45, "categoria": "Linternas"},
+            {"codigo": "1203123", "nombre": "Bandeja Acero Inoxidable Rectangular Mia-8901", "precio": 1.40, "categoria": "Bandejas y Charoles"},
+            {"codigo": "4100222", "nombre": "Pistola de Silicona Smart (40W) LC-606N", "precio": 5.00, "categoria": "Pistolas de Silicon"},
+            {"codigo": "1108718", "nombre": "Frasco de Vidrio Con Tapa Metalica 4.3 Litros 57291", "precio": 4.50, "categoria": "Frascos y Pomos"},
+            {"codigo": "2101222", "nombre": "Cortauña Acero Pequeño Bell N-609", "precio": 0.82, "categoria": "Implementos para Manicure y Pedicure"},
+            {"codigo": "3200013", "nombre": "Cobertor Parabrisas Mia-8377/8378/8379/8380/8381/8382/8383", "precio": 1.20, "categoria": "Accesorios y Herramientas para Auto"},
+            {"codigo": "2100924", "nombre": "Alicate Pie Luciana Mia-350", "precio": 1.50, "categoria": "Implementos para Manicure y Pedicure"},
+            {"codigo": "1702156", "nombre": "Colgador Plástico Animalitos 2 Piezas Mia23169", "precio": 0.55, "categoria": "Porta Llaves y Ganchos"},
+            {"codigo": "1200815", "nombre": "Copa De Acero Inoxidable Big-Home Bblgdk-450", "precio": 9.00, "categoria": "Copas"}
+        ];
+
+        // Ruta de tus fotos
+        const baseImgUrl = "https://tus-imagenes.com/mirna/"; 
+        
+        const categorySelect = document.getElementById('category-select');
+        const productGrid = document.getElementById('product-grid');
+        const searchInput = document.getElementById('search-input');
+        const productCount = document.getElementById('product-count');
+
+        // Extraer categorías únicas
+        const categories = [...new Set(productsData.map(p => p.categoria))].sort();
+
+        // 1. Renderizar Opciones de Categorías
+        function renderCategories() {
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "Todas";
+            defaultOption.textContent = "Todas las categorías";
+            categorySelect.appendChild(defaultOption);
+
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                categorySelect.appendChild(opt);
+            });
+        }
+
+        // 2. Renderizar los Productos (Formato Limpio / Blanco)
+        function renderProducts(products) {
+            productGrid.innerHTML = '';
+            productCount.textContent = products.length;
+
+            products.forEach(p => {
+                const imageUrl = `${baseImgUrl}${p.codigo}.jpg`;
+                // Reemplazando el punto por coma para el decimal según diseño
+                const priceFormatted = p.precio.toFixed(2).replace('.', ',');
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow-sm border border-gray-200 p-5 relative flex flex-col hover:shadow-md transition-shadow";
+                
+                card.innerHTML = `
+                    <!-- Tag del código arriba a la izquierda -->
+                    <div class="absolute top-4 left-4 bg-mirna-blue text-white text-xs font-bold px-3 py-1 rounded-full z-10">
+                        ${p.codigo}
+                    </div>
+
+                    <!-- Imagen -->
+                    <div class="w-full h-44 mb-4 mt-6 overflow-hidden flex items-center justify-center">
+                        <img src="${imageUrl}" 
+                             alt="${p.nombre}" 
+                             class="max-h-full max-w-full object-contain"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=Falta+Foto';"
+                        >
+                    </div>
+
+                    <!-- Info Producto -->
+                    <span class="text-[10px] text-mirna-red font-bold uppercase tracking-wider mb-1 line-clamp-1">${p.categoria}</span>
+                    <h3 class="text-sm font-bold text-gray-900 leading-snug mb-4 flex-1 line-clamp-2">${p.nombre}</h3>
+                    
+                    <!-- Precios -->
+                    <div class="w-full mt-auto pt-4 border-t border-gray-100 flex flex-col">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Precio especial</span>
+                            <span class="text-xs text-gray-400">Cod: ${p.codigo}</span>
+                        </div>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span class="text-3xl font-extrabold text-mirna-red">$${priceFormatted}</span>
+                            <span class="text-xs font-semibold text-gray-500">USD</span>
+                        </div>
+                    </div>
+                `;
+                productGrid.appendChild(card);
+            });
+        }
+
+        // 3. Lógica para filtrar por categoría
+        function handleFilter() {
+            const category = categorySelect.value;
+            const term = searchInput.value.toLowerCase();
+            filterAndSearch(category, term);
+        }
+
+        // 4. Lógica para buscar por nombre o código
+        function handleSearch() {
+            const category = categorySelect.value;
+            const term = searchInput.value.toLowerCase();
+            filterAndSearch(category, term);
+        }
+
+        function filterAndSearch(category, term) {
+            let filtered = productsData;
+            
+            if (category !== "Todas") {
+                filtered = filtered.filter(p => p.categoria === category);
+            }
+            
+            if (term.trim() !== "") {
+                filtered = filtered.filter(p => 
+                    p.nombre.toLowerCase().includes(term) || 
+                    p.codigo.includes(term)
+                );
+            }
+            
+            renderProducts(filtered);
+        }
+
+        // 5. Descargar a PDF (ignorando nav)
+        function downloadPDF() {
+            const element = document.getElementById('catalog-content');
+            const opt = {
+                margin:       10,
+                filename:     'Catalogo_PreciosEspeciales_Mirna_B2B.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#f4f6f9' },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Inicializar la app
+        renderCategories();
+        renderProducts(productsData);
+
+    </script>
 </body>
 </html>
