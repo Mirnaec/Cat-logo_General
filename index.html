@@ -1,220 +1,416 @@
 <!doctype html>
+
 <html lang="es">
+
 <head>
+
 <meta charset="utf-8" />
+
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+
 <title>Catálogo Mirna B2B</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
+
 :root{
-  /* Colores Almacenes Mirna */
-  --ink:#2b529e;      /* Azul Mirna */
-  --accent:#e31a61;   /* Fucsia Mirna */
-  --muted:#64748b; 
-  --paper:#f6f7fb;
-  --line:#e7eaf0;
+
+/* Colores Almacenes Mirna */
+
+--ink:#2b529e; /* Azul Mirna */
+
+--accent:#e31a61; /* Fucsia Mirna */
+
+--muted:#64748b;
+
+--paper:#f6f7fb;
+
+--line:#e7eaf0;
+
 }
+
 *{box-sizing:border-box} body{margin:0;background:var(--paper);font-family:Inter,Arial,sans-serif;color:#172033}
+
 header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+
 .top{max-width:1280px;margin:auto;padding:16px 22px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
 .brand{margin-right:auto}.brand h1{margin:0;font-size:22px;color:var(--ink)}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+
 input,select,button{border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:white;font:inherit}
+
 input{min-width:230px}button{cursor:pointer;font-weight:700;background:var(--accent);color:white;border-color:var(--accent)}
+
 main{max-width:1280px;margin:auto;padding:28px 22px 70px}
 
+
+
 /* Banner Principal */
+
 .hero{background:linear-gradient(135deg,#2b529e,#1c366e);color:white;border-radius:24px;padding:34px;margin-bottom:24px}
+
 .hero h2{font-size:46px;font-weight:900;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px}
+
 .hero p{font-size:22px;font-weight:500;margin:0;opacity:.9}
+
 .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.pill{padding:8px 12px;background:rgba(255,255,255,.15);border-radius:999px;font-size:13px}
+
+
 
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 
+
+
 /* Tarjetas y Fotos encapsuladas */
+
 .card{background:white;border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;break-inside:avoid;box-shadow:0 5px 20px rgba(43,82,158,.08);height:100%;overflow:hidden;}
+
 .photo{flex:0 0 200px; width:100%; background:#fff; display:flex; justify-content:center; align-items:center; position:relative; border-bottom:1px solid var(--line); padding:10px; overflow:hidden;}
+
 .photo img{max-width:100%; max-height:100%; object-fit:contain;}
+
 .no-photo{color:#94a3b8;font-size:13px;text-align:center;padding:20px}
+
 .badge{position:absolute;top:12px;left:12px;background:var(--ink);color:white;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:700;z-index:2}
 
+
+
 /* Información del producto */
+
 .info{padding:16px;display:flex;flex-direction:column;flex-grow:1}
+
 .group{font-size:10px;letter-spacing:.09em;color:var(--accent);font-weight:800;text-transform:uppercase}
+
 .name{font-size:15px;font-weight:800;line-height:1.4;margin:7px 0 12px;word-break:break-word;flex-grow:1}
 
+
+
 /* Píldoras de Código y Precio */
+
 .price-section { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+
 .price-tags { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
 .tag-pill { background: white; border: 1px solid var(--line); padding: 5px 10px; border-radius: 6px; font-size: 13px; color: var(--muted); box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+
 .price{font-size:26px;font-weight:900;color:var(--accent); margin:0; display:flex; align-items:baseline; gap:4px; line-height:1;}
+
 .price small{font-size:13px;color:var(--muted);font-weight:700}
 
+
+
 /* Extras dinámicos */
+
 .extras-container{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+
 .extra-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:4px}
+
 .extra-row b{color:var(--ink)}
+
 .empty{padding:60px;text-align:center;color:var(--muted);grid-column:1/-1}
+
+
 
 @media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.hero h2{font-size:32px}.hero p{font-size:18px}.top{padding:12px}.photo{flex:0 0 170px}}@media(max-width:430px){.grid{grid-template-columns:1fr}input{min-width:100%}}
 
+
+
 /* REGLAS ESTRICTAS PARA EL PDF (IMPRESIÓN) */
+
 @media print{
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  @page{size:A4 portrait; margin:10mm}
-  header{position:static}.no-print{display:none!important}
-  body{background:white}
-  main{max-width:none;padding:0}
-  .hero{border-radius:8px;margin:0 0 16px;padding:22px;background:var(--ink) !important;color:white !important;}
-  .grid{grid-template-columns:repeat(3,1fr);gap:12px; align-items:start;}
-  .card{border-radius:8px;box-shadow:none;border-color:#ddd; height:auto; page-break-inside:avoid; break-inside:avoid;}
-  .photo{flex:0 0 150px; padding:5px; border-bottom:1px solid #ddd;}
-  .info{padding:10px}
-  .name{font-size:12px;margin-bottom:8px}
-  .price{font-size:18px}
-  .tag-pill { box-shadow: none; border-color: #eee; padding: 3px 6px; font-size: 10px; }
+
+/* Forzar al navegador a pintar los fondos (el azul del banner) */
+
+* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+
+/* Formato vertical (portrait) */
+
+@page{size:A4 portrait; margin:10mm}
+
+
+header{position:static}.no-print{display:none!important}
+
+body{background:white}
+
+main{max-width:none;padding:0}
+
+
+.hero{border-radius:8px;margin:0 0 16px;padding:22px;background:var(--ink) !important;color:white !important;}
+
+
+/* Grid de 3 columnas ajustado al inicio para evitar huecos */
+
+.grid{grid-template-columns:repeat(3,1fr);gap:12px; align-items:start;}
+
+
+/* Evitar que las tarjetas se partan a la mitad o generen huecos gigantes */
+
+.card{border-radius:8px;box-shadow:none;border-color:#ddd; height:auto; page-break-inside:avoid; break-inside:avoid;}
+
+
+.photo{flex:0 0 150px; padding:5px; border-bottom:1px solid #ddd;}
+
+.info{padding:10px}
+
+.name{font-size:12px;margin-bottom:8px}
+
+.price{font-size:18px}
+
+.tag-pill { box-shadow: none; border-color: #eee; padding: 3px 6px; font-size: 10px; }
+
 }
+
 </style>
+
 </head>
+
 <body>
+
 <header class="no-print">
-  <div class="top">
-    <div class="brand"><h1>Catálogo Almacenes Mirna</h1><p>Ventas B2B · Precios al por mayor</p></div>
-    <input id="search" placeholder="Buscar producto o código..." />
-    <select id="category"><option value="">Todas las categorías</option></select>
-    <select id="marcacion" style="display:none;"><option value="">Todas las marcaciones</option></select>
-    <button id="pdf">⬇ Descargar PDF</button>
-  </div>
+
+<div class="top">
+
+<div class="brand"><h1>Catálogo Almacenes Mirna</h1><p>Ventas B2B · Precios al por mayor</p></div>
+
+<input id="search" placeholder="Buscar producto o código..." />
+
+<select id="category"><option value="">Todas las categorías</option></select>
+
+<select id="marcacion" style="display:none;"><option value="">Todas las marcaciones</option></select>
+
+<button id="pdf">⬇ Descargar PDF</button>
+
+</div>
+
 </header>
+
 <main id="catalog">
-  <section class="hero">
-    <h2>CATÁLOGO</h2>
-    <p>Precios Especiales</p>
-    <div class="stats"><span class="pill" id="count">0 productos</span></div>
-  </section>
-  <div id="grid" class="grid"></div>
+
+<section class="hero">
+
+<h2>CATÁLOGO</h2>
+
+<p>Precios Especiales</p>
+
+<div class="stats"><span class="pill" id="count">0 productos</span></div>
+
+</section>
+
+<div id="grid" class="grid"></div>
+
 </main>
+
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmPvRCxsv-F6nn_gXJm9ZM8b5-XChmShSR02VJkwKGKkcqHSCw1KB5AMG4bQaxeUTjYQ/exec"; 
+
+// TU URL DEL APPS SCRIPT
+
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmPvRCxsv-F6nn_gXJm9ZM8b5-XChmShSR02VJkwKGKkcqHSCw1KB5AMG4bQaxeUTjYQ/exec";
+
+
 
 let products = [], images = {}, filtered = [];
 
+
+
 const $ = s => document.querySelector(s);
+
 const money = n => n == null ? "Consultar" : new Intl.NumberFormat("es-EC",{style:"currency",currency:"USD"}).format(n);
 
+
+
 async function loadData(){
-  if(APPS_SCRIPT_URL){
-    try{
-      const remote = await fetch(APPS_SCRIPT_URL).then(r=>r.json());
-      if(remote.products?.length) products = remote.products.map(normalize);
-      images = remote.images || {};
-    }catch(e){ console.error("Error cargando datos", e); }
-  }
-  fillDropdowns(); applyFilters();
+
+if(APPS_SCRIPT_URL){
+
+try{
+
+const remote = await fetch(APPS_SCRIPT_URL).then(r=>r.json());
+
+if(remote.products?.length) products = remote.products.map(normalize);
+
+images = remote.images || {};
+
+}catch(e){ console.error("Error cargando datos", e); }
+
 }
+
+fillDropdowns(); applyFilters();
+
+}
+
+
 
 function normalize(x){
-  // Extraemos el precio ya sea de la propiedad price, Precio, o dentro de extras
-  let rawPrice = x.price ?? x.Precio ?? (x.extras && (x.extras.Precio || x.extras.precio)) ?? 0;
-  
-  // Si viene como string desde sheets (ej: "$ 12,50"), limpiamos los caracteres y cambiamos coma por punto
-  if (typeof rawPrice === 'string') {
-    rawPrice = rawPrice.replace(/[^\d,-]/g, '').replace(',', '.');
-  }
 
-  // Clonamos extras y nos aseguramos de borrar el precio para que no aparezca abajo duplicado
-  let safeExtras = x.extras ? { ...x.extras } : {};
-  Object.keys(safeExtras).forEach(key => {
-    if (key.toLowerCase() === 'precio') {
-      delete safeExtras[key];
-    }
-  });
+return {
 
-  return {
-    code: String(x.code||"").trim(),
-    name: String(x.name||"").trim(),
-    price: Number(rawPrice) || 0,
-    group: String(x.group||"Sin categoría").trim(),
-    marcacion: String(x.marcacion||"").trim(),
-    extras: safeExtras
-  };
+code: String(x.code||"").trim(),
+
+name: String(x.name||"").trim(),
+
+price: Number(x.price || 0),
+
+group: String(x.group||"Sin categoría").trim(),
+
+marcacion: String(x.marcacion||"").trim(),
+
+extras: x.extras || {}
+
+};
+
 }
+
+
 
 function fillDropdowns(){
-  [...new Set(products.map(p=>p.group).filter(Boolean))].sort().forEach(g=>{
-    const o=document.createElement("option");o.value=g;o.textContent=g;$("#category").append(o);
-  });
-  
-  const marcaciones = [...new Set(products.map(p=>p.marcacion).filter(Boolean))].sort();
-  if(marcaciones.length > 0){
-    $("#marcacion").style.display = 'inline-block';
-    marcaciones.forEach(m=>{
-      const o=document.createElement("option");o.value=m;o.textContent=m;$("#marcacion").append(o);
-    });
-  }
+
+[...new Set(products.map(p=>p.group).filter(Boolean))].sort().forEach(g=>{
+
+const o=document.createElement("option");o.value=g;o.textContent=g;$("#category").append(o);
+
+});
+
+
+const marcaciones = [...new Set(products.map(p=>p.marcacion).filter(Boolean))].sort();
+
+if(marcaciones.length > 0){
+
+$("#marcacion").style.display = 'inline-block';
+
+marcaciones.forEach(m=>{
+
+const o=document.createElement("option");o.value=m;o.textContent=m;$("#marcacion").append(o);
+
+});
+
 }
+
+}
+
+
 
 function applyFilters(){
-  const q=$("#search").value.toLowerCase().trim();
-  const cat=$("#category").value;
-  const marc=$("#marcacion").value;
-  
-  filtered=products.filter(p=>
-    (!cat || p.group === cat) &&
-    (!marc || p.marcacion === marc) &&
-    (!q || `${p.code} ${p.name} ${p.group} ${p.marcacion}`.toLowerCase().includes(q))
-  );
-  
-  $("#count").textContent=`${filtered.length} productos`;
-  render();
+
+const q=$("#search").value.toLowerCase().trim();
+
+const cat=$("#category").value;
+
+const marc=$("#marcacion").value;
+
+
+filtered=products.filter(p=>
+
+(!cat || p.group === cat) &&
+
+(!marc || p.marcacion === marc) &&
+
+(!q || `${p.code} ${p.name} ${p.group} ${p.marcacion}`.toLowerCase().includes(q))
+
+);
+
+
+$("#count").textContent=`${filtered.length} productos`;
+
+render();
+
 }
+
+
 
 function render(){
-  const grid=$("#grid"); grid.innerHTML="";
-  if(!filtered.length){grid.innerHTML='<div class="empty">No encontramos productos con esos filtros.</div>';return}
-  
-  filtered.forEach(p=>{
-    const image=images[p.code];
-    
-    let extrasHTML = '';
-    const extraKeys = Object.keys(p.extras);
-    if(extraKeys.length > 0){
-      extrasHTML = `<div class="extras-container">
-        ${extraKeys.map(k => p.extras[k] ? `<div class="extra-row"><span>${esc(k)}:</span> <b>${esc(p.extras[k])}</b></div>` : '').join('')}
-      </div>`;
-    }
 
-    const card=document.createElement("article");card.className="card";
-    
-    card.innerHTML=`
-      <div class="photo">
-        <span class="badge">${esc(p.code)}</span>
-        ${image?`<img loading="lazy" src="${image}" alt="${esc(p.name)}">`:`<div class="no-photo">Foto pendiente<br><b>${esc(p.code)}</b></div>`}
-      </div>
-      <div class="info">
-        <div class="group">${esc(p.group)}</div>
-        <div class="name">${esc(p.name)}</div>
-        
-        <div class="price-section">
-          <div class="price-tags">
-            <span class="tag-pill">Precio Especial</span>
-            <span class="tag-pill">Cod: ${esc(p.code)}</span>
-          </div>
-          <div class="price">${money(p.price)} <small>USD</small></div>
-        </div>
+const grid=$("#grid"); grid.innerHTML="";
 
-        ${extrasHTML}
-      </div>`;
-    grid.appendChild(card);
-  });
+if(!filtered.length){grid.innerHTML='<div class="empty">No encontramos productos con esos filtros.</div>';return}
+
+
+filtered.forEach(p=>{
+
+const image=images[p.code];
+
+
+let extrasHTML = '';
+
+const extraKeys = Object.keys(p.extras);
+
+if(extraKeys.length > 0){
+
+extrasHTML = `<div class="extras-container">
+
+${extraKeys.map(k => p.extras[k] ? `<div class="extra-row"><span>${esc(k)}:</span> <b>${esc(p.extras[k])}</b></div>` : '').join('')}
+
+</div>`;
+
 }
 
+
+
+const card=document.createElement("article");card.className="card";
+
+
+card.innerHTML=`
+
+<div class="photo">
+
+<span class="badge">${esc(p.code)}</span>
+
+${image?`<img loading="lazy" src="${image}" alt="${esc(p.name)}">`:`<div class="no-photo">Foto pendiente<br><b>${esc(p.code)}</b></div>`}
+
+</div>
+
+<div class="info">
+
+<div class="group">${esc(p.group)}</div>
+
+<div class="name">${esc(p.name)}</div>
+
+
+<div class="price-section">
+
+<div class="price-tags">
+
+<span class="tag-pill">Precio Especial</span>
+
+<span class="tag-pill">Cod: ${esc(p.code)}</span>
+
+</div>
+
+<div class="price">${money(p.price)} <small>USD</small></div>
+
+</div>
+
+
+
+${extrasHTML}
+
+</div>`;
+
+grid.appendChild(card);
+
+});
+
+}
+
+
+
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-$("#search").addEventListener("input",applyFilters); 
+
+$("#search").addEventListener("input",applyFilters);
+
 $("#category").addEventListener("change",applyFilters);
+
 $("#marcacion").addEventListener("change",applyFilters);
+
 $("#pdf").addEventListener("click",()=>window.print());
 
+
+
 loadData();
+
 </script>
+
 </body>
+
 </html>
