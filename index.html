@@ -59,24 +59,14 @@ main{max-width:1280px;margin:auto;padding:28px 22px 70px}
 
 /* REGLAS ESTRICTAS PARA EL PDF (IMPRESIÓN) */
 @media print{
-  /* Forzar al navegador a pintar los fondos (el azul del banner) */
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  
-  /* Formato vertical (portrait) */
   @page{size:A4 portrait; margin:10mm}
-  
   header{position:static}.no-print{display:none!important}
   body{background:white}
   main{max-width:none;padding:0}
-  
   .hero{border-radius:8px;margin:0 0 16px;padding:22px;background:var(--ink) !important;color:white !important;}
-  
-  /* Grid de 3 columnas ajustado al inicio para evitar huecos */
   .grid{grid-template-columns:repeat(3,1fr);gap:12px; align-items:start;}
-  
-  /* Evitar que las tarjetas se partan a la mitad o generen huecos gigantes */
   .card{border-radius:8px;box-shadow:none;border-color:#ddd; height:auto; page-break-inside:avoid; break-inside:avoid;}
-  
   .photo{flex:0 0 150px; padding:5px; border-bottom:1px solid #ddd;}
   .info{padding:10px}
   .name{font-size:12px;margin-bottom:8px}
@@ -104,7 +94,6 @@ main{max-width:1280px;margin:auto;padding:28px 22px 70px}
   <div id="grid" class="grid"></div>
 </main>
 <script>
-// TU URL DEL APPS SCRIPT
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmPvRCxsv-F6nn_gXJm9ZM8b5-XChmShSR02VJkwKGKkcqHSCw1KB5AMG4bQaxeUTjYQ/exec"; 
 
 let products = [], images = {}, filtered = [];
@@ -124,13 +113,29 @@ async function loadData(){
 }
 
 function normalize(x){
+  // Extraemos el precio ya sea de la propiedad price, Precio, o dentro de extras
+  let rawPrice = x.price ?? x.Precio ?? (x.extras && (x.extras.Precio || x.extras.precio)) ?? 0;
+  
+  // Si viene como string desde sheets (ej: "$ 12,50"), limpiamos los caracteres y cambiamos coma por punto
+  if (typeof rawPrice === 'string') {
+    rawPrice = rawPrice.replace(/[^\d,-]/g, '').replace(',', '.');
+  }
+
+  // Clonamos extras y nos aseguramos de borrar el precio para que no aparezca abajo duplicado
+  let safeExtras = x.extras ? { ...x.extras } : {};
+  Object.keys(safeExtras).forEach(key => {
+    if (key.toLowerCase() === 'precio') {
+      delete safeExtras[key];
+    }
+  });
+
   return {
     code: String(x.code||"").trim(),
     name: String(x.name||"").trim(),
-    price: Number(x.price || 0),
+    price: Number(rawPrice) || 0,
     group: String(x.group||"Sin categoría").trim(),
     marcacion: String(x.marcacion||"").trim(),
-    extras: x.extras || {}
+    extras: safeExtras
   };
 }
 
